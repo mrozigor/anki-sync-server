@@ -96,6 +96,7 @@ and put it in the `ankisyncd` directory.
 
     addr = "http://127.0.0.1:27701/" # put your server address here
     anki.sync.SYNC_BASE = "%s" + addr
+    aqt.mediasync.SYNC_BASE = "%s" + addr
     def resetHostNum():
         aqt.mw.pm.profile['hostNum'] = None
     anki.hooks.addHook("profileLoaded", resetHostNum)

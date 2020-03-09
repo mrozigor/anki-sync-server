@@ -230,7 +230,7 @@ class SyncMediaHandler:
         # Remove media files that were removed on the client.
         media_to_remove = []
         for normname, ordinal in meta:
-            if ordinal == '':
+            if ordinal == '' or ordinal == None:
                 media_to_remove.append(self._normalize_filename(normname))
 
         # Add media files that were added on the client.
@@ -498,6 +498,12 @@ class SyncApp:
             hkey = req.POST['k']
         except KeyError:
             hkey = None
+
+        if hkey == None:
+            try:
+                hkey = req.GET['k']
+            except KeyError:
+                hkey = None
 
         session = self.session_manager.load(hkey, self.create_session)
 
