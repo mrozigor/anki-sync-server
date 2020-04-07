@@ -6,7 +6,6 @@ import getpass
 import ankisyncd.config
 from ankisyncd.users import get_user_manager
 
-
 config = ankisyncd.config.load()
 
 def usage():

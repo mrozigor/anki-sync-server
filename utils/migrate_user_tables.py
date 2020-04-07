@@ -14,9 +14,7 @@ import sqlite3
 import ankisyncd.config
 conf = ankisyncd.config.load()
 
-
 def main():
-
     if os.path.isfile(conf["auth_db_path"]):
         conn = sqlite3.connect(conf["auth_db_path"])
 
