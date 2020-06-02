@@ -4,6 +4,7 @@ import os
 from sqlite3 import dbapi2 as sqlite
 
 import anki.db
+import anki.collection
 
 class FullSyncManager:
     def upload(self, col, data, session):
@@ -23,12 +24,13 @@ class FullSyncManager:
                                  "corrupt.")
 
         # Overwrite existing db.
+        print("{}", col)
         col.close()
         try:
             os.replace(temp_db_path, session.get_collection_path())
         finally:
-            col.reopen()
-            col.load()
+            col.open()
+            #col = Collection(session.get_collection_path())
 
         return "OK"
 
@@ -38,8 +40,9 @@ class FullSyncManager:
         try:
             data = open(session.get_collection_path(), 'rb').read()
         finally:
-            col.reopen()
-            col.load()
+            col.open()
+            #col = Collection(session.get_collection_path())
+
         return data
 
 

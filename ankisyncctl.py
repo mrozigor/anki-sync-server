@@ -2,20 +2,39 @@
 import os
 import sys
 import getpass
+import subprocess
+from os.path import dirname, realpath
 
 import ankisyncd.config
-from ankisyncd.users import get_user_manager
-
 config = ankisyncd.config.load()
 
 def usage():
     print("usage: {} <command> [<args>]".format(sys.argv[0]))
     print()
     print("Commands:")
+    print("  run                - run server")
     print("  adduser <username> - add a new user")
     print("  deluser <username> - delete a user")
     print("  lsuser             - list users")
     print("  passwd <username>  - change password of a user")
+
+def run():
+    ankiPath = os.path.join(dirname(realpath(__file__)), "anki-bundled")
+    ankiMakefilePath = ankiPath + "/Makefile"
+
+    # Build bundled Anki
+    if subprocess.call(["sed -i -e 's/pip install virtualenv/pip install --user virtualenv/g' " + ankiMakefilePath], shell=True):
+        print("Could not prepare bundled Anki to build.", file=sys.stderr)
+        return
+
+    if subprocess.call(["cd " + ankiPath + " && make develop"], shell=True):
+        print("Could not build bundled Anki")
+        return
+
+    # Run server
+    if subprocess.call(["source " + ankiPath + "/pyenv/bin/activate && pip install webob && python -m ankisyncd"], shell=True):
+        print("Could not run ankisyncd")
+        return
 
 def adduser(username):
     password = getpass.getpass("Enter password for {}: ".format(username))
@@ -56,6 +75,7 @@ def main():
     argc = len(sys.argv)
 
     cmds = {
+        "run": run,
         "adduser": adduser,
         "deluser": deluser,
         "lsuser": lsuser,
